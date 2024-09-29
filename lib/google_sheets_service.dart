@@ -7,7 +7,7 @@ class GoogleSheetsService {
   
   Future<void> submitDefectReport(List<Map<String, String>> defects, String spreadsheetId) async {
     try {
-      final serviceAccountJson = const String.fromEnvironment('SERVICE_ACCOUNT_JSON');
+      const serviceAccountJson = String.fromEnvironment('SERVICE_ACCOUNT_JSON');
       if (serviceAccountJson.isEmpty) {
         throw Exception('SERVICE_ACCOUNT_JSON environment variable is not set');
       }
