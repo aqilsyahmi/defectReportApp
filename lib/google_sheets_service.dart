@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:googleapis/sheets/v4.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
@@ -8,9 +10,22 @@ class GoogleSheetsService {
   
   Future<void> submitDefectReport(List<Map<String, String>> defects, String spreadsheetId) async {
     try {
-      final serviceAccountJson = const String.fromEnvironment('SERVICE_ACCOUNT_JSON');
-      if (serviceAccountJson.isEmpty) {
-        throw Exception('SERVICE_ACCOUNT_JSON environment variable is not set');
+      String serviceAccountJson;
+      if (kIsWeb) {
+        serviceAccountJson = const String.fromEnvironment('SERVICE_ACCOUNT_JSON');
+        if (serviceAccountJson.isEmpty) {
+          throw Exception('SERVICE_ACCOUNT_JSON environment variable is not set');
+        }
+      } else {
+        final serviceAccountFile = const String.fromEnvironment('SERVICE_ACCOUNT_FILE');
+        if (serviceAccountFile.isEmpty) {
+          throw Exception('SERVICE_ACCOUNT_FILE environment variable is not set');
+        }
+        final file = File(serviceAccountFile);
+        if (!await file.exists()) {
+          throw Exception('Service account file not found');
+        }
+        serviceAccountJson = await file.readAsString();
       }
 
       final credentials = ServiceAccountCredentials.fromJson(
