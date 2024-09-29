@@ -20,5 +20,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/service_account.json
+  # Remove any reference to assets/service_account.json here
