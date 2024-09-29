@@ -12,14 +12,11 @@ jobs:
         with:
           channel: 'stable'
       - run: flutter pub get
-      - name: Create temporary service account file
-        run: |
-          echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
       - name: Build Web
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         run: |
-          flutter build web --dart-define=SERVICE_ACCOUNT_FILE=service_account.json
-      - name: Remove temporary service account file
-        run: rm service_account.json
+          flutter build web --dart-define=SERVICE_ACCOUNT_JSON="$SERVICE_ACCOUNT_JSON"
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
