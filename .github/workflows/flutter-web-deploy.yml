@@ -18,5 +18,5 @@ jobs:
           flutter build web --dart-define=SERVICE_ACCOUNT_JSON=${{ secrets.SERVICE_ACCOUNT_JSON }}
       - uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           publish_dir: ./build/web
