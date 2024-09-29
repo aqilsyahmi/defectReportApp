@@ -16,7 +16,9 @@ jobs:
         run: |
           echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
       - name: Build Web
-        run: flutter build web --dart-define=SERVICE_ACCOUNT_JSON='${{ secrets.SERVICE_ACCOUNT_JSON }}'
+        run: |
+          export SERVICE_ACCOUNT_JSON=$(cat service_account.json)
+          flutter build web --dart-define=SERVICE_ACCOUNT_JSON="$SERVICE_ACCOUNT_JSON"
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
