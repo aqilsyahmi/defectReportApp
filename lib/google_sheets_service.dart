@@ -9,15 +9,21 @@ class GoogleSheetsService {
   
   Future<void> submitDefectReport(List<Map<String, String>> defects, String spreadsheetId) async {
     try {
-      final serviceAccountJson = const String.fromEnvironment('SERVICE_ACCOUNT_JSON');
-      if (serviceAccountJson.isEmpty) {
-        throw Exception('SERVICE_ACCOUNT_JSON environment variable is not set');
+      String jsonString;
+      try {
+        // Try to load from assets first (for local development)
+        jsonString = await rootBundle.loadString('assets/service_account.json');
+      } catch (_) {
+        // If loading from assets fails, use the environment variable
+        jsonString = const String.fromEnvironment('SERVICE_ACCOUNT_JSON');
       }
       
-      final credentials = ServiceAccountCredentials.fromJson(
-        json.decode(serviceAccountJson)
-      );
+      if (jsonString.isEmpty) {
+        throw Exception('Service account JSON not found');
+      }
 
+      final credentials = ServiceAccountCredentials.fromJson(json.decode(jsonString));
+      
       print('Authenticating with Google...');
       final client = await clientViaServiceAccount(credentials, _scopes);
       print('Authentication successful.');

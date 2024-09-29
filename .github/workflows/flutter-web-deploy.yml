@@ -13,6 +13,7 @@ jobs:
           channel: 'stable'
       - run: flutter pub get
       - run: |
+          mkdir -p assets
           echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" | base64 -d > assets/service_account.json
           flutter build web --dart-define=SERVICE_ACCOUNT_JSON=${{ secrets.SERVICE_ACCOUNT_JSON }}
       - uses: peaceiris/actions-gh-pages@v3
