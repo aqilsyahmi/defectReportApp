@@ -1,29 +1,21 @@
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:googleapis/sheets/v4.dart';
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:http/http.dart' as http;
 
 class GoogleSheetsService {
   static const _scopes = [SheetsApi.spreadsheetsScope];
   
   Future<void> submitDefectReport(List<Map<String, String>> defects, String spreadsheetId) async {
     try {
-      String jsonString;
-      try {
-        // Try to load from assets first (for local development)
-        jsonString = await rootBundle.loadString('assets/service_account.json');
-      } catch (_) {
-        // If loading from assets fails, use the environment variable
-        jsonString = const String.fromEnvironment('SERVICE_ACCOUNT_JSON');
-      }
-      
-      if (jsonString.isEmpty) {
-        throw Exception('Service account JSON not found');
+      final serviceAccountJson = const String.fromEnvironment('SERVICE_ACCOUNT_JSON');
+      if (serviceAccountJson.isEmpty) {
+        throw Exception('SERVICE_ACCOUNT_JSON environment variable is not set');
       }
 
-      final credentials = ServiceAccountCredentials.fromJson(json.decode(jsonString));
-      
+      final credentials = ServiceAccountCredentials.fromJson(
+        json.decode(serviceAccountJson)
+      );
+
       print('Authenticating with Google...');
       final client = await clientViaServiceAccount(credentials, _scopes);
       print('Authentication successful.');

@@ -12,11 +12,15 @@ jobs:
         with:
           channel: 'stable'
       - run: flutter pub get
-      - run: |
-          mkdir -p assets
-          echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" | base64 -d > assets/service_account.json
-          flutter build web --dart-define=SERVICE_ACCOUNT_JSON=${{ secrets.SERVICE_ACCOUNT_JSON }}
-      - uses: peaceiris/actions-gh-pages@v3
+      - name: Create service account file
+        run: |
+          echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
+      - name: Build Web
+        run: flutter build web --dart-define=SERVICE_ACCOUNT_JSON='${{ secrets.SERVICE_ACCOUNT_JSON }}'
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           publish_dir: ./build/web
+      - name: Clean up
+        run: rm service_account.json
